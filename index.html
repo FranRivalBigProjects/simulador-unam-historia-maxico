@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Examen UNAM Historia de Mexico - 12 Reactivos</title>
+<meta name="description" content="Simulador gratuito de historia de Mexico para el examen de admision UNAM: independencia, revolucion y epoca contemporanea. 12 reactivos.">
+<meta name="google-site-verification" content="PENDING_VERIFICATION_CODE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-panel: #14171c;
+    --bg-panel-2: #1b1f26;
+    --border: #262b33;
+    --text: #e6e9ee;
+    --text-dim: #8b93a1;
+    --accent: #5eead4;
+    --accent-dim: #2dd4bf;
+    --warn: #fbbf24;
+    --bad: #fb7185;
+    --good: #4ade80;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 18px 64px;
+  }
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .brand span { color: var(--accent); }
+  .badge {
+    font-size: 11px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 4px 9px;
+    border-radius: 999px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0 0 28px;
+    max-width: 52ch;
+  }
+  .meta-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .meta-chip {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  .meta-chip b { color: var(--text); }
+
+  #startScreen, #resultScreen { display: block; }
+  #quizScreen { display: none; }
+
+  .cta-btn {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--accent);
+    color: #04201c;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+  }
+  .cta-btn:hover { background: var(--accent-dim); }
+  .cta-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+  .ghost-btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .ghost-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .progress-bar {
+    height: 4px;
+    width: 100%;
+    background: var(--bg-panel-2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+  .quiz-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  #timer { color: var(--warn); font-weight: 700; }
+  #timer.low { color: var(--bad); }
+
+  .q-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 20px;
+  }
+  .q-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 20px;
+    color: var(--text);
+  }
+  .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--bg-panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 9px;
+    cursor: pointer;
+  }
+  .opt:hover { border-color: var(--accent-dim); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt.selected { border-color: var(--accent); background: rgba(94,234,212,0.08); }
+  .opt.correct { border-color: var(--good); background: rgba(74,222,128,0.1); }
+  .opt.incorrect { border-color: var(--bad); background: rgba(251,113,133,0.1); }
+  .opt[disabled] { cursor: default; }
+
+  .q-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+  }
+
+  #resultScreen { display: none; text-align: center; }
+  .score-big {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 64px;
+    color: var(--accent);
+    margin: 6px 0 4px;
+  }
+  .score-label { color: var(--text-dim); font-size: 13px; margin-bottom: 26px; }
+  .breakdown {
+    text-align: left;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row .tag-ok { color: var(--good); }
+  .breakdown-row .tag-bad { color: var(--bad); }
+
+  footer.site-footer {
+    margin-top: 48px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">practi<span>ruta</span>.top</div>
+    <div class="badge">Independencia y revolucion</div>
+  </header>
+
+  <div id="startScreen">
+    <h1>Simulador de Historia de Mexico &mdash; Examen UNAM</h1>
+    <p class="subtitle">12 reactivos sobre epoca prehispanica, independencia, reforma, revolucion y Mexico contemporaneo.</p>
+
+    <div class="meta-row">
+      <div class="meta-chip"><b>12</b> reactivos</div>
+      <div class="meta-chip"><b>12</b> min sugeridos</div>
+      <div class="meta-chip">Nivel <b>bachillerato</b></div>
+      <div class="meta-chip">Enfoque <b>Area 1</b></div>
+    </div>
+
+    <button class="cta-btn" id="startBtn" type="button">Empezar simulador</button>
+  </div>
+
+  <div id="quizScreen">
+    <div class="quiz-head">
+      <span id="qCounter">Pregunta 1 / 12</span>
+      <span id="timer">12:00</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="q-card">
+      <div class="q-eyebrow" id="qTopic">Algebra</div>
+      <p class="q-text" id="qText">Cargando pregunta...</p>
+      <div id="optsContainer"></div>
+      <div class="q-footer">
+        <button class="cta-btn" id="nextBtn" type="button" disabled>Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultScreen">
+    <div class="score-label">Tu resultado</div>
+    <div class="score-big" id="scoreBig">0/15</div>
+    <div class="score-label" id="scoreMsg">Calculando...</div>
+    <div class="breakdown" id="breakdown"></div>
+    <button class="cta-btn" id="retryBtn" type="button">Repetir simulador</button>
+    <button class="ghost-btn" id="shareBtn" type="button" style="margin-left:10px;">Ver mas simuladores</button>
+  </div>
+
+  <footer class="site-footer">
+    Simulador no oficial de practica. No esta afiliado a la UNAM. Consulta siempre la convocatoria oficial.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var QUESTIONS = [
+    { topic: 'Prehispanico', text: 'La capital del imperio mexica era:', opts: ['Teotihuacan', 'Tenochtitlan', 'Monte Alban', 'Chichen Itza'], correct: 1 },
+    { topic: 'Colonia', text: 'La Nueva Espana estuvo bajo dominio de:', opts: ['Portugal', 'Francia', 'Espana', 'Inglaterra'], correct: 2 },
+    { topic: 'Independencia', text: 'El movimiento de independencia de Mexico inicio en el ano:', opts: ['1810', '1821', '1857', '1910'], correct: 0 },
+    { topic: 'Independencia', text: 'El personaje conocido como iniciador de la independencia es:', opts: ['Benito Juarez', 'Miguel Hidalgo', 'Porfirio Diaz', 'Agustin de Iturbide'], correct: 1 },
+    { topic: 'Reforma', text: 'Benito Juarez es reconocido principalmente por:', opts: ['Iniciar la independencia', 'Las Leyes de Reforma', 'La Revolucion Mexicana', 'La conquista de Mexico'], correct: 1 },
+    { topic: 'Porfiriato', text: 'El periodo de gobierno prolongado de Porfirio Diaz se conoce como:', opts: ['La Colonia', 'El Porfiriato', 'La Reforma', 'El Virreinato'], correct: 1 },
+    { topic: 'Revolucion', text: 'La Revolucion Mexicana inicio en el ano:', opts: ['1810', '1910', '1917', '1821'], correct: 1 },
+    { topic: 'Revolucion', text: 'Emiliano Zapata es reconocido por su lucha en favor de:', opts: ['La banca', 'La reforma agraria', 'La industria petrolera', 'La educacion superior'], correct: 1 },
+    { topic: 'Constitucion', text: 'La Constitucion actualmente vigente en Mexico fue promulgada en:', opts: ['1857', '1917', '1824', '1821'], correct: 1 },
+    { topic: 'Mexico contemporaneo', text: 'La expropiacion petrolera en Mexico ocurrio durante el gobierno de:', opts: ['Lazaro Cardenas', 'Porfirio Diaz', 'Benito Juarez', 'Venustiano Carranza'], correct: 0 },
+    { topic: 'Independencia', text: 'La consumacion de la independencia de Mexico ocurrio en:', opts: ['1810', '1821', '1857', '1867'], correct: 1 },
+    { topic: 'Mexico contemporaneo', text: 'El partido que goberno Mexico durante la mayor parte del siglo XX fue:', opts: ['PAN', 'PRI', 'PRD', 'MORENA'], correct: 1 }
+  ];
+
+  var TIME_LIMIT_SECONDS = 12 * 60;
+
+  var state = {
+    current: 0,
+    answers: [],
+    timeLeft: TIME_LIMIT_SECONDS,
+    timerId: null
+  };
+
+  var startScreen = document.getElementById('startScreen');
+  var quizScreen = document.getElementById('quizScreen');
+  var resultScreen = document.getElementById('resultScreen');
+  var startBtn = document.getElementById('startBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var retryBtn = document.getElementById('retryBtn');
+  var qCounter = document.getElementById('qCounter');
+  var qTopic = document.getElementById('qTopic');
+  var qText = document.getElementById('qText');
+  var optsContainer = document.getElementById('optsContainer');
+  var progressFill = document.getElementById('progressFill');
+  var timerEl = document.getElementById('timer');
+  var scoreBig = document.getElementById('scoreBig');
+  var scoreMsg = document.getElementById('scoreMsg');
+  var breakdown = document.getElementById('breakdown');
+
+  function pad(n) {
+    return n < 10 ? '0' + n : '' + n;
+  }
+
+  function formatTime(totalSeconds) {
+    var m = Math.floor(totalSeconds / 60);
+    var s = totalSeconds % 60;
+    return pad(m) + ':' + pad(s);
+  }
+
+  function startTimer() {
+    state.timerId = setInterval(function () {
+      state.timeLeft -= 1;
+      timerEl.textContent = formatTime(state.timeLeft);
+      if (state.timeLeft <= 60) {
+        timerEl.className = 'low';
+      }
+      if (state.timeLeft <= 0) {
+        clearInterval(state.timerId);
+        finishQuiz();
+      }
+    }, 1000);
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.current];
+    qCounter.textContent = 'Pregunta ' + (state.current + 1) + ' / ' + QUESTIONS.length;
+    qTopic.textContent = q.topic;
+    qText.textContent = q.text;
+    progressFill.style.width = (((state.current) / QUESTIONS.length) * 100) + '%';
+
+    optsContainer.innerHTML = '';
+    nextBtn.disabled = true;
+
+    for (var i = 0; i < q.opts.length; i++) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt';
+      btn.textContent = q.opts[i];
+      btn.setAttribute('data-index', i);
+      btn.addEventListener('click', makeOptionHandler(i));
+      optsContainer.appendChild(btn);
+    }
+  }
+
+  function makeOptionHandler(index) {
+    return function () {
+      selectOption(index);
+    };
+  }
+
+  function selectOption(index) {
+    var q = QUESTIONS[state.current];
+    var buttons = optsContainer.querySelectorAll('.opt');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('disabled', 'disabled');
+      if (i === q.correct) {
+        buttons[i].className = 'opt correct';
+      }
+      if (i === index && index !== q.correct) {
+        buttons[i].className = 'opt incorrect';
+      }
+    }
+    state.answers[state.current] = index;
+    nextBtn.disabled = false;
+  }
+
+  function nextQuestion() {
+    if (state.current < QUESTIONS.length - 1) {
+      state.current += 1;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    if (state.timerId) {
+      clearInterval(state.timerId);
+    }
+    quizScreen.style.display = 'none';
+    resultScreen.style.display = 'block';
+
+    var correctCount = 0;
+    var byTopic = {};
+
+    for (var i = 0; i < QUESTIONS.length; i++) {
+      var q = QUESTIONS[i];
+      var isCorrect = state.answers[i] === q.correct;
+      if (isCorrect) { correctCount += 1; }
+      if (!byTopic[q.topic]) {
+        byTopic[q.topic] = { correct: 0, total: 0 };
+      }
+      byTopic[q.topic].total += 1;
+      if (isCorrect) {
+        byTopic[q.topic].correct += 1;
+      }
+    }
+
+    scoreBig.textContent = correctCount + '/' + QUESTIONS.length;
+
+    var pct = Math.round((correctCount / QUESTIONS.length) * 100);
+    var msg;
+    if (pct >= 80) {
+      msg = 'Excelente nivel. Vas muy bien encaminado para el area 1.';
+    } else if (pct >= 60) {
+      msg = 'Buen resultado. Repasa los temas marcados abajo.';
+    } else {
+      msg = 'Nivel inicial. Enfocate en los temas con mas errores.';
+    }
+    scoreMsg.textContent = msg;
+
+    breakdown.innerHTML = '';
+    for (var topic in byTopic) {
+      if (Object.prototype.hasOwnProperty.call(byTopic, topic)) {
+        var row = document.createElement('div');
+        row.className = 'breakdown-row';
+        var t = byTopic[topic];
+        var tagClass = t.correct === t.total ? 'tag-ok' : 'tag-bad';
+        row.innerHTML = '<span>' + topic + '</span><span class="' + tagClass + '">' + t.correct + '/' + t.total + '</span>';
+        breakdown.appendChild(row);
+      }
+    }
+  }
+
+  function resetQuiz() {
+    state.current = 0;
+    state.answers = [];
+    state.timeLeft = TIME_LIMIT_SECONDS;
+    timerEl.className = '';
+    timerEl.textContent = formatTime(state.timeLeft);
+    resultScreen.style.display = 'none';
+    startScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    renderQuestion();
+    startTimer();
+  }
+
+  startBtn.addEventListener('click', function () {
+    startScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    renderQuestion();
+    startTimer();
+  });
+
+  nextBtn.addEventListener('click', nextQuestion);
+  retryBtn.addEventListener('click', resetQuiz);
+
+})();
+</script>
+</body>
+</html>
